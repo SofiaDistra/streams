@@ -20,12 +20,6 @@ public class SlopeOneArrays {
     private static Double[][] outPutDataArray;
     private static int numberOfItems = 5;
 
-    public SlopeOneArrays(int numberOfUsers) {
-        initializeData(numberOfUsers);
-        buildDiffMatrix();
-        predict();
-    }
-
     public static void initializeData(int numberOfUsers) {
         inputDataArray = new Double[numberOfUsers][5];
         outPutDataArray = new Double[numberOfUsers][5];
@@ -50,6 +44,26 @@ public class SlopeOneArrays {
 
         initDataArray();
 
+    }
+
+    public static void initializeDataTestValues() {
+        inputDataArray = new Double[4][5];
+
+        inputDataArray[0] = new Double[]{0.0, 1.0, 0.0, 4.0, 6.0};
+        inputDataArray[1] = new Double[]{5.0, 0.0, 6.0, 0.0, 0.0};
+        inputDataArray[2] = new Double[]{9.0, 0.0, 1.0, 0.0, 6.0};
+        inputDataArray[3] = new Double[]{7.0, 8.0, 0.0, 9.0, 0.0};
+
+        diffArray = new Double[numberOfItems][numberOfItems];
+        freqArray = new Integer[numberOfItems][numberOfItems];
+
+        for(int i=0; i<numberOfItems; i++) {
+
+            for(int j=0; j<numberOfItems; j++) {
+                diffArray[i][j] = 0.0;
+                freqArray[i][j] = 0;
+            }
+        }
     }
 
     private static void initDataArray() {
@@ -113,7 +127,7 @@ public class SlopeOneArrays {
             }
         }
 
-        System.out.println("Showing Diff Array");
+        /*System.out.println("Showing Diff Array");
         System.out.println("------------------");
         for (int i=0; i<diffArray.length; i++) {
             for (int j=0; j<diffArray[i].length; j++) {
@@ -131,80 +145,34 @@ public class SlopeOneArrays {
             }
 
             System.out.println("");
-        }
-
-    }
-
-    public static void predict() {
-
-        /*int user = 0;
-        int item = 0;
-        double result;
-
-        double origValue = inputDataArray[user][item];
-
-        if(origValue!=0) {
-            for(int k=0;k<diffArray.length;k++) {
-                double diffValue = diffArray[k][item];
-                if(diffValue==0 && k!=item) continue;
-                double predictedValue = diffValue +origValue;
-
-                int freqValue = freqArray[k][item];
-                double finalValue = predictedValue * freqValue;
-
-                uPred[k] += finalValue;
-                uFreq[k] += freqValue;
-            }
-
-            result = uPred[item] / uFreq[item];
-            System.out.println("User " + user + " rating for item " + item + " = " + result);
-
-        }
-        else {
-            System.out.println("Item already rated");
         }*/
 
-        for(int i=0; i<inputDataArray.length;i++) {
-            for(int j=0; j<inputDataArray[i].length;j++) {
-                double origValue = inputDataArray[i][j];
-
-                if(origValue!=0) {
-                    for(int k=0;k<diffArray.length;k++) {
-                        double diffValue = diffArray[j][k];
-                        if(diffValue==0 && k!=j) continue;
-                        double predictedValue = diffValue +origValue;
-
-                        int freqValue = freqArray[j][k];
-                        double finalValue = predictedValue * freqValue;
-
-                        uPred[k] += finalValue;
-                        uFreq[k] += freqValue;
-                    }
-                }
-
-            }
-
-            for(int j=0;j<outPutDataArray[i].length;j++) {
-
-                if(inputDataArray[i][j] == 0) {
-                    outPutDataArray[i][j] = uPred[j] / uFreq[j];
-                }
-                else {
-                    outPutDataArray[i][j] = inputDataArray[i][j];
-                }
-            }
-        }
-
-        System.out.println("Showing Predictions");
-        System.out.println("-------------------");
-
-        for (int i=0; i<outPutDataArray.length; i++) {
-            for (int j=0; j<outPutDataArray[i].length; j++) {
-                System.out.print(outPutDataArray[i][j] + " ");
-            }
-
-            System.out.println("");
-        }
-
     }
+
+    public static void predict(int user, int item) {
+
+        double originalValue, diffValue, predValue;
+        double finalValue = 0.0;
+        int freqValue;
+        int freqSum = 0;
+
+        // for every item i rated by user
+        for(int i=0; i<inputDataArray[user].length;i++) {
+            originalValue = inputDataArray[user][i];
+            if(originalValue != 0) {
+                diffValue = diffArray[item][i];
+                predValue = diffValue + originalValue;
+
+                freqValue = freqArray[item][i];
+
+                finalValue += predValue * freqValue;
+
+                freqSum += freqValue;
+            }
+        }
+
+        double prediction = finalValue / freqSum;
+        System.out.println("Prediction for user " + user + " and item " + item + " = " + prediction);
+    }
+
 }
