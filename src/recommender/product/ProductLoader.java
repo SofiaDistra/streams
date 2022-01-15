@@ -1,4 +1,7 @@
-package recommender;
+package recommender.product;
+
+import common.Product;
+import common.Review;
 
 import java.io.BufferedReader;
 import java.io.IOException;

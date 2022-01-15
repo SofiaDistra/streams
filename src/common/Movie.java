@@ -1,4 +1,4 @@
-package movie.recommender;
+package common;
 
 import java.util.Objects;
 

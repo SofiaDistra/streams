@@ -1,6 +1,6 @@
-package recommender;
+package common;
 
-public class ProductReview extends Product{
+public class ProductReview extends Product {
 
     private String buyer;
     private Short value;

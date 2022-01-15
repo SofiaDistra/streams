@@ -1,4 +1,4 @@
-package recommender;
+package common;
 
 public class Review {
 

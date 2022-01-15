@@ -1,4 +1,4 @@
-package recommender;
+package recommender.product;
 
 public class ProductRecommendation implements Comparable {
 

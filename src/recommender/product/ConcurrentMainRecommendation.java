@@ -1,4 +1,7 @@
-package recommender;
+package recommender.product;
+
+import common.Product;
+import common.ProductReview;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;

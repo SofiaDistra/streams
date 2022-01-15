@@ -1,4 +1,4 @@
-package movie.recommender;
+package common;
 
 import java.util.*;
 
@@ -6,6 +6,7 @@ public class User {
 
     private String name;
     private Map<Movie, Double> ratings;
+    private Double avgRating;
 
     public User(String name) {
         this.name = name;
@@ -22,6 +23,14 @@ public class User {
 
     public Map<Movie, Double> getRatings() {
         return ratings;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
     }
 
     public void setRatings(Map<Movie, Double> ratings) {
