@@ -1,4 +1,4 @@
-package recommender;
+package search;
 
 import common.Product;
 
