@@ -1,4 +1,4 @@
-package bio;
+package fastq;
 
 import java.io.IOException;
 import java.nio.file.Files;

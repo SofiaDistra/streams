@@ -1,4 +1,4 @@
-package bio;
+package fastq;
 
 public class FastQ {
 

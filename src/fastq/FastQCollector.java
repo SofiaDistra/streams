@@ -1,4 +1,4 @@
-package bio;
+package fastq;
 
 import java.util.ArrayList;
 import java.util.List;
