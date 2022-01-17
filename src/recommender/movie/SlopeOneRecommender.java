@@ -20,7 +20,6 @@ public class SlopeOneRecommender {
     private Movie movie;
     private List<User> users;
     Map<Movie, Double> userRatings;
-
     Map<Movie, Long> freqsFlat;
     List<Combo> diffsFinal;
 
@@ -65,18 +64,7 @@ public class SlopeOneRecommender {
     }
 
     private void preProcess() {
-        // contains the frequencies
-        List<Map<Movie, Long>> freqsMap = userRatings.keySet().stream()
-                .map(rating -> users.stream().filter(u ->
-                                !u.equals(user) && u.getRatings().containsKey(rating) && u.getRatings().containsKey(movie)).collect(Collectors.toList())
-                        .stream().map(user -> new Combo(1L, rating))
-                        .collect(Collectors.groupingBy(Combo::getMovie, Collectors.counting())))
-                .collect(Collectors.toList());
-
-        // the frequencies list flattened
-        freqsFlat = freqsMap.stream().flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+        freqsFlat = RecommenderUtils.computeCoOccurrences(users, user, movie);
 
         // contains the differences
         List<Map<Movie, Double>> diffs = userRatings.keySet().stream()
