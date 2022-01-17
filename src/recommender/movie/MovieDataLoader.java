@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class MovieDataLoader {
      * @param path the path to the file containing the data
      * @return a list of users with their ratings for each movie item
      */
-    public static List<User> load(Path path) {
+    public static List<User> loadUserRatings(Path path) {
 
         List<User> users;
 
@@ -51,5 +52,21 @@ public class MovieDataLoader {
         }
 
         return users;
+    }
+
+    public static List<Movie> loadMovies(Path path) {
+        List<Movie> movies;
+
+        try {
+            movies = Files.lines(path)
+                    .skip(1) // skip the header line
+                    .map(new MovieMapper()) // transform each line to an array
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            movies = new ArrayList<>();
+        }
+
+        return movies;
     }
 }

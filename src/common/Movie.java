@@ -1,13 +1,22 @@
 package common;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Movie {
 
     private String id;
+    private String title;
+    private List<String> genres;
 
     public Movie(String id) {
         this.id = id;
+        this.genres = new ArrayList<>();
+    }
+
+    public Movie() {
+        this.genres = new ArrayList<>();
     }
 
     public String getId() {
@@ -18,6 +27,25 @@ public class Movie {
         this.id = id;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
+
+    public void addGenre(String genre) {
+        this.genres.add(genre);
+    }
 
     @Override
     public boolean equals(Object o) {
