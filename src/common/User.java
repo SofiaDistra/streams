@@ -6,7 +6,6 @@ public class User {
 
     private String name;
     private Map<Movie, Double> ratings;
-    private Double avgRating;
 
     public User(String name) {
         this.name = name;
@@ -26,11 +25,10 @@ public class User {
     }
 
     public Double getAvgRating() {
-        return avgRating;
-    }
+        Double userRatingsSum = ratings.values().stream()
+                .reduce(Double::sum).get();
 
-    public void setAvgRating(Double avgRating) {
-        this.avgRating = avgRating;
+        return userRatingsSum/ratings.size();
     }
 
     public void setRatings(Map<Movie, Double> ratings) {
