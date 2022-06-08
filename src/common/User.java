@@ -4,20 +4,20 @@ import java.util.*;
 
 public class User {
 
-    private String name;
+    private String id;
     private Map<Movie, Double> ratings;
 
-    public User(String name) {
-        this.name = name;
+    public User(String id) {
+        this.id = id;
         this.ratings = new HashMap<>();
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Map<Movie, Double> getRatings() {
@@ -31,10 +31,6 @@ public class User {
         return userRatingsSum/ratings.size();
     }
 
-    public void setRatings(Map<Movie, Double> ratings) {
-        this.ratings = ratings;
-    }
-
     public void addRating(Movie m, Double value) {
         this.ratings.put(m,value);
     }
@@ -44,18 +40,18 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(name, user.name);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "name='" + id + '\'' +
                 '}';
     }
 }

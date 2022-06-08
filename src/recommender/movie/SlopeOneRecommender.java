@@ -36,10 +36,13 @@ public class SlopeOneRecommender {
         this.users = users;
     }
 
+    /**
+     * Calculates and prints the predicted rating of a user for a specific movie
+     */
     public void predict() {
 
         if(user.getRatings().containsKey(movie)) {
-            System.out.println("User with id " + user.getName() + ", already rated movie with id " + movie.getId());
+            System.out.println("User with id " + user.getId() + ", already rated movie with id " + movie.getId());
             System.out.println("Rating = " + user.getRatings().get(movie));
             return;
         }
@@ -55,14 +58,17 @@ public class SlopeOneRecommender {
         }).reduce(Double::sum);
 
         // sum the frequencies
-        Optional<Long> totalFreqs = freqsFlat.entrySet().stream().map(f -> f.getValue()).reduce(Long::sum);
+        Optional<Long> totalFreqs = freqsFlat.values().stream().reduce(Long::sum);
 
         // final prediction
         Double prediction = pred.get()/totalFreqs.get();
 
-        System.out.println("Prediction for User " + user.getName() + " and movie " + movie.getId() + " = " + prediction);
+        System.out.println("Prediction for User " + user.getId() + " and movie " + movie.getId() + " = " + prediction);
     }
 
+    /**
+     * Preprocesses the data, so as to calculate the differences and co-occurrences matrices
+     */
     private void preProcess() {
         freqsFlat = RecommenderUtils.computeCoOccurrences(users, user, movie);
 

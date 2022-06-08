@@ -9,12 +9,13 @@ import java.util.Map;
 public class ItemCosineSimilarity {
 
 
+    /** Calculates and returns the cosine similarity between two items
+     * @param ratings1 a map with all the ratings for a given movie
+     * @param ratings2 a map with all the ratings for the other movie
+     * @return the similarity between two items, which ratings are given as parameters
+     */
     public static Double itemsSimilarity(Map<User, Double> ratings1, Map<User, Double> ratings2) {
-        /*
-         TODO etsi xanw merikous xristes pou mporei na yparxoun sto ratings2
-         prepei sta maps na yparxoun oloi oi koinoi xristes, me rating estw 0
-         fillUserRatings: na tin xrisimopoiisw
-        */
+
         Double sum = ratings1.entrySet().stream()
                 .map(e -> ratings2.get(e.getKey()) != null ? e.getValue() * ratings2.get(e.getKey()) : 0.0)
                 .reduce(Double::sum)

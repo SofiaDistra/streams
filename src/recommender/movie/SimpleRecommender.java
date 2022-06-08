@@ -17,6 +17,12 @@ public class SimpleRecommender {
     User user;
     Movie movieToPredict;
 
+    /** Constructor for the SimpleRecommender class
+     * @param movies A list with all the movies
+     * @param user The user for whom to produce the prediction
+     * @param movieToPredict The movie for which to produce the prediction
+     * @param allUsers A list with all the users
+     */
     public SimpleRecommender(List<Movie> movies, User user, Movie movieToPredict, List<User> allUsers) {
         this.allMovies = movies;
         this.user = user;
@@ -24,18 +30,21 @@ public class SimpleRecommender {
         this.allUsers = allUsers;
     }
 
+    /**
+     * Calculates and prints the predicted rating of a user for a specific movie
+     */
     public void predict() {
         if(user.getRatings().containsKey(movieToPredict)) {
-            System.out.println("User with id " + user.getName() + ", already rated movie with id " + movieToPredict.getId());
+            System.out.println("User with id " + user.getId() + ", already rated movie with id " + movieToPredict.getId());
             System.out.println("Rating = " + user.getRatings().get(movieToPredict));
             return;
         }
 
-        setUpRating();
-
         // compute co-occurrences and normalize them
         Map<Movie, Long> freqs = RecommenderUtils.computeCoOccurrences(allUsers, user, movieToPredict);
         coOccurrences = RecommenderUtils.normalizeCoOccurrences(freqs);
+
+        setUpRating();
 
         // multiply co-occurrences with user's original ratings
         Map<Movie, Double> userRatings = user.getRatings();
@@ -48,9 +57,13 @@ public class SimpleRecommender {
                     return original * co;
                 }).reduce(Double::sum);
 
-        System.out.println("Prediction for User " + user.getName() + " and movie " + movieToPredict.getId() + " = " + prediction.get());
+        System.out.println("Prediction for User " + user.getId() + " and movie " + movieToPredict.getId() + " = " + prediction.get());
     }
 
+    /**
+     * For the target user, sets up missing ratings with the average rating of the user
+     * All the movies that haven't been rated by the user, have the user's average rating
+     */
     private void setUpRating() {
 
         // for the given user, set up missing ratings with avg rating of the user

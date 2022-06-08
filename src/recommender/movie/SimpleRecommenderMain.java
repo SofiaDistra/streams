@@ -22,11 +22,15 @@ public class SimpleRecommenderMain {
         User u = new User(args[0]);
         if(users.contains(u)) u = users.get(users.indexOf(u));
         else {
-            System.out.println("No User with id " + u.getName() + " exists");
+            System.out.println("No User with id " + u.getId() + " exists");
             return;
         }
-        // TODO check if give movie id is valid
+
         Movie m = new Movie(args[1]);
+        if(!movies.contains(m)) {
+            System.out.println("Invalid movie id. Exiting...");
+            return;
+        }
 
         SimpleRecommender sr = new SimpleRecommender(movies, u, m, users);
         sr.predict();

@@ -19,6 +19,15 @@ public class ItemKNeighborsRecommender {
     private List<User> allUsers;
     private List<Movie> allMovies;
 
+
+    /**
+     * Constructor for the ItemKNeighborsRecommender class
+     * @param k The number of neighbors
+     * @param movie The movie for which to produce the prediction
+     * @param user The user for whom to produce the prediction
+     * @param allUsers a list of all the users
+     * @param allMovies a list of all the movies
+     */
     public ItemKNeighborsRecommender(int k, Movie movie, User user, List<User> allUsers, List<Movie> allMovies) {
         this.k = k;
         this.movie = movie;
@@ -28,6 +37,9 @@ public class ItemKNeighborsRecommender {
         this.similarMovies = new HashMap<>();
     }
 
+    /**
+     * Calculates and prints the predicted rating of a user for a specific movie
+     */
     public void predict(){
 
         // calculate similarity of this movie with every other available movie
@@ -49,6 +61,8 @@ public class ItemKNeighborsRecommender {
                         Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
+        
+
         // find top K similar movies
         int count = 0;
         Map<Movie, Double> topKSimilarMovies = new LinkedHashMap<>();
@@ -68,7 +82,7 @@ public class ItemKNeighborsRecommender {
 
         Double prediction = userAvgRating + (numerator/denominator);
 
-        System.out.println("Prediction for User " + user.getName() + " and movie " + movie.getId() + " = " + prediction);
+        System.out.println("Prediction for User " + user.getId() + " and movie " + movie.getId() + " = " + prediction);
     }
 
     public static void main(String args[]) {
@@ -84,11 +98,15 @@ public class ItemKNeighborsRecommender {
         User u = new User(args[0]);
         if(users.contains(u)) u = users.get(users.indexOf(u));
         else {
-            System.out.println("No User with id " + u.getName() + " exists");
+            System.out.println("No User with id " + u.getId() + " exists");
             return;
         }
-        // TODO check if give movie id is valid
+
         Movie m = new Movie(args[1]);
+        if(!movies.contains(m)) {
+            System.out.println("Invalid movie id. Exiting...");
+            return;
+        }
 
         int k = Integer.parseInt(args[2]);
 

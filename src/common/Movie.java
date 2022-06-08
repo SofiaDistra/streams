@@ -39,10 +39,6 @@ public class Movie {
         return genres;
     }
 
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
-
     public void addGenre(String genre) {
         this.genres.add(genre);
     }

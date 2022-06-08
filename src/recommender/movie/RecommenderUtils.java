@@ -12,6 +12,15 @@ import java.util.stream.Collectors;
 
 public class RecommenderUtils {
 
+
+    /**
+     * Computes the cooccurrences of a given movie with
+     * the rest of the movies in the dataset
+     * @param users a list of all the users in the dataset
+     * @param u the user for whom the recommendations are to be generated
+     * @param m the movie for which the cooccurrences are computed
+     * @return a Map with movies as keys and their corresponding cooccurrences as values
+     */
     public static Map<Movie, Long> computeCoOccurrences(List<User> users, User u, Movie m) {
 
         Map<Movie, Double> userRatings = u.getRatings();
@@ -39,7 +48,7 @@ public class RecommenderUtils {
     }
 
     /**
-     * This method normalizes the ratings of a user,
+     * Normalizes the ratings of a user,
      * by subtracting from each rating the user's average rating
      * @param ratings the ratings to be normalized
      * @return the normalized ratings
