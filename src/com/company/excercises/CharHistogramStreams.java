@@ -1,5 +1,8 @@
 package com.company.excercises;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -8,26 +11,33 @@ import java.util.stream.IntStream;
 
 public class CharHistogramStreams {
 
-    public static void main(String[] args) {
-        String words[] = {"hello", "world", "more", "words", "that", "come", "to", "my", "mind"};
+    public static void main(String[] args) throws IOException {
 
-        // take the above list of words and flatmap them to a list of letters
-        List<String> letters =
-                Arrays.stream(words)
-                        .map(w -> w.split(""))
-                        .flatMap(Arrays::stream)
-                        .collect(Collectors.toList());
+        List<String> words = Files.lines(Path.of("resources/text.txt"))// read file line by line to a stream
+                .map(s -> s.split("\\s+")) // split each line to its words, space separated
+                .flatMap(Arrays::stream) // flatmap previous stream<String[]> to stream<String>
+                .map(w -> w.replaceAll("[,.]*", "")) // remove commas and dots from each word
+                .collect(Collectors.toList());
+
+        List<Character> chars = words
+                .stream()
+                .flatMap(x -> x.chars().mapToObj(i -> (char) i))
+                .collect(Collectors.toList());
 
         Integer[] freqs = new Integer[26];
         IntStream.rangeClosed(0,25).forEach(i -> freqs[i] = i);
 
-        List<Integer> result = Arrays.stream(freqs)
+        List<Integer> result2 = Arrays.stream(freqs)
+                .parallel()
                 .map(i -> (int)
-                        letters.stream().map(l -> l.toLowerCase(Locale.ROOT).charAt(0))
-                                .filter(l -> Character.getNumericValue(l) == i+10)
+                        chars.stream()
+                                .filter(c -> Character.getNumericValue(c) == i+10)
                                 .count())
                 .collect(Collectors.toList());
 
-        result.forEach(System.out::println);
+
+        result2.forEach(r -> System.out.print(r + " "));
+
+
     }
 }

@@ -18,7 +18,6 @@ public class FastQMain {
 
             // read file and create the list of FastQs using FastQCollector
             List<FastQ> fastQList = Files.lines(Path.of("resources/100K.fastq"))
-                    .sequential()
                     .collect(FastQCollector.collector())
                     .stream()
                     .parallel()
@@ -33,7 +32,7 @@ public class FastQMain {
                             })
                     .collect(Collectors.toList());
 
-            // fastQList.forEach(System.out::println);
+            fastQList.forEach(System.out::println);
             end = new Date();
             System.out.println("Execution Time: " + (end.getTime() -
                     start.getTime()));
