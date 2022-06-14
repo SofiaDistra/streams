@@ -20,14 +20,14 @@ public class CharHistogramStreams {
                 .collect(Collectors.toList());
 
         List<Character> chars = words
-                .stream()
+                .parallelStream()
                 .flatMap(x -> x.chars().mapToObj(i -> (char) i))
                 .collect(Collectors.toList());
 
         Integer[] freqs = new Integer[26];
         IntStream.rangeClosed(0,25).forEach(i -> freqs[i] = i);
 
-        List<Integer> result2 = Arrays.stream(freqs)
+        List<Integer> result = Arrays.stream(freqs)
                 .parallel()
                 .map(i -> (int)
                         chars.stream()
@@ -36,7 +36,7 @@ public class CharHistogramStreams {
                 .collect(Collectors.toList());
 
 
-        result2.forEach(r -> System.out.print(r + " "));
+        result.forEach(r -> System.out.print(r + " "));
 
 
     }
