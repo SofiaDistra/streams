@@ -27,6 +27,7 @@ public class RecommenderUtils {
 
         // contains the co-occurrences
         List<Map<Movie, Long>> freqsMap = userRatings.keySet().stream()
+                .parallel()
                 .map(rating -> users.stream().filter(user ->
                                 !user.equals(u) && user.getRatings().containsKey(rating) && user.getRatings().containsKey(m)).collect(Collectors.toList())
                         .stream().map(user -> new Combo(1L, rating))
@@ -34,16 +35,16 @@ public class RecommenderUtils {
                 .collect(Collectors.toList());
 
         // the frequencies list flattened
-        return freqsMap.stream()
+        return freqsMap.parallelStream()
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static Map<Movie, Double> normalizeCoOccurrences(Map<Movie, Long> freqs) {
 
-        Optional<Long> totalFreqs = freqs.values().stream().reduce(Long::sum);
+        Optional<Long> totalFreqs = freqs.values().stream().parallel().reduce(Long::sum);
 
-        return freqs.entrySet().stream()
+        return freqs.entrySet().stream().parallel()
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue() / Double.valueOf(totalFreqs.get())));
     }
 
@@ -87,7 +88,7 @@ public class RecommenderUtils {
      */
     public static Map<User, Double> collectMovieRatings(List<User> users, Movie movie) {
 
-        return users.stream()
+        return users.stream().parallel()
                 .map(u -> u.getRatings().containsKey(movie) ? new Pair<>(u, u.getRatings().get(movie)) :
                         new Pair<>(u, 0.0))
                 .collect(Collectors.toMap(Pair::getKey, Pair::getRating));

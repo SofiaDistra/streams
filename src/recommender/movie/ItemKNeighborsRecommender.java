@@ -48,13 +48,14 @@ public class ItemKNeighborsRecommender {
         RecommenderUtils.fillUserRatings(allMovies, user);
         for(User u: allUsers) RecommenderUtils.fillUserRatings(allMovies, u);
 
-        similarMovies = allMovies.stream().map(m ->
+        similarMovies = allMovies.stream().parallel().map(m ->
                         new Pair(m, ItemCosineSimilarity.itemsSimilarity(movieRatings, RecommenderUtils.collectMovieRatings(allUsers, m))))
                 .collect(Collectors.toMap(t -> (Movie) t.getKey(), t -> (Double) t.getRating()));
 
         // sort similar movies according to similarity (descending)
         Map<Movie, Double> similarMoviesSorted = similarMovies.entrySet()
                 .stream()
+                .parallel()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -74,8 +75,8 @@ public class ItemKNeighborsRecommender {
         }
 
         Double userAvgRating = user.getAvgRating();
-        Double denominator = topKSimilarMovies.values().stream().reduce(Double::sum).get();
-        Double numerator = topKSimilarMovies.entrySet().stream()
+        Double denominator = topKSimilarMovies.values().stream().parallel().reduce(Double::sum).get();
+        Double numerator = topKSimilarMovies.entrySet().stream().parallel()
                 .map(e -> e.getValue()* user.getRatings().get(e.getKey()))
                 .reduce(Double::sum)
                 .get();

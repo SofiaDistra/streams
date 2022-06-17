@@ -50,7 +50,7 @@ public class SlopeOneRecommender {
         preProcess();
 
         // calculate the prediction sum
-        Optional<Double> pred = diffsFinal.stream().map(combo -> {
+        Optional<Double> pred = diffsFinal.stream().parallel().map(combo -> {
             double orig = userRatings.get(combo.getMovie());
             Long freq = combo.getFreq();
             Double differ = combo.getDiff();
@@ -58,7 +58,7 @@ public class SlopeOneRecommender {
         }).reduce(Double::sum);
 
         // sum the frequencies
-        Optional<Long> totalFreqs = freqsFlat.values().stream().reduce(Long::sum);
+        Optional<Long> totalFreqs = freqsFlat.values().parallelStream().reduce(Long::sum);
 
         // final prediction
         Double prediction = pred.get()/totalFreqs.get();
@@ -74,6 +74,7 @@ public class SlopeOneRecommender {
 
         // contains the differences
         List<Map<Movie, Double>> diffs = userRatings.keySet().stream()
+                .parallel()
                 .map(rating -> users.stream().filter(u ->
                                 !u.equals(user) && u.getRatings().containsKey(rating)
                                         && u.getRatings().containsKey(movie)).collect(Collectors.toList())
@@ -85,11 +86,11 @@ public class SlopeOneRecommender {
                 .collect(Collectors.toList());
 
         // the differences list flattened
-        Map<Movie, Double> diffsFlat = diffs.stream().flatMap(map -> map.entrySet().stream())
+        Map<Movie, Double> diffsFlat = diffs.parallelStream().flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // the list of final differences
-        diffsFinal = diffsFlat.entrySet().stream()
+        diffsFinal = diffsFlat.entrySet().stream().parallel()
                 .map(d -> {
                     Long freq = freqsFlat.get(d.getKey());
                     return new Combo(d.getValue() / freq, freq, d.getKey());

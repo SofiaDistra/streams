@@ -67,11 +67,11 @@ public class SimpleRecommender {
     private void setUpRating() {
 
         // for the given user, set up missing ratings with avg rating of the user
-        Optional<Double> userSumRating = user.getRatings().values().stream().reduce(Double::sum);
+        Optional<Double> userSumRating = user.getRatings().values().parallelStream().reduce(Double::sum);
         Double userAvg = userSumRating.get()/user.getRatings().size();
 
         // movies not rated by the user should have the user's avg rating
-        Map<Movie, Double> collect = allMovies.stream()
+        Map<Movie, Double> collect = allMovies.stream().parallel()
                 .filter(movie -> !user.getRatings().containsKey(movie))
                 .collect(Collectors.toMap(Function.identity(), value -> userAvg));
 
