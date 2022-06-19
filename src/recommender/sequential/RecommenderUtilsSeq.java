@@ -1,4 +1,4 @@
-package recommender.movie;
+package recommender.sequential;
 
 import common.Combo;
 import common.Movie;
@@ -10,24 +10,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RecommenderUtils {
+public class RecommenderUtilsSeq {
 
-
-    /**
-     * Computes the cooccurrences of a given movie with
-     * the rest of the movies in the dataset
-     * @param users a list of all the users in the dataset
-     * @param u the user for whom the recommendations are to be generated
-     * @param m the movie for which the cooccurrences are computed
-     * @return a Map with movies as keys and their corresponding cooccurrences as values
-     */
     public static Map<Movie, Long> computeCoOccurrences(List<User> users, User u, Movie m) {
 
         Map<Movie, Double> userRatings = u.getRatings();
 
         // contains the co-occurrences
         List<Map<Movie, Long>> freqsMap = userRatings.keySet().stream()
-                .parallel()
                 .map(rating -> users.stream().filter(user ->
                                 !user.equals(u) && user.getRatings().containsKey(rating) && user.getRatings().containsKey(m)).collect(Collectors.toList())
                         .stream().map(user -> new Combo(1L, rating))
@@ -35,8 +25,7 @@ public class RecommenderUtils {
                 .collect(Collectors.toList());
 
         // the frequencies list flattened
-        return freqsMap
-                .parallelStream()
+        return freqsMap.stream()
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -44,11 +33,9 @@ public class RecommenderUtils {
     public static Map<Movie, Double> normalizeCoOccurrences(Map<Movie, Long> freqs) {
 
         Optional<Long> totalFreqs = freqs.values().stream()
-                .parallel()
                 .reduce(Long::sum);
 
         return freqs.entrySet().stream()
-                .parallel()
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue() / Double.valueOf(totalFreqs.get())));
     }
 
@@ -92,7 +79,7 @@ public class RecommenderUtils {
      */
     public static Map<User, Double> collectMovieRatings(List<User> users, Movie movie) {
 
-        return users.stream().parallel()
+        return users.stream()
                 .map(u -> u.getRatings().containsKey(movie) ? new Pair<>(u, u.getRatings().get(movie)) :
                         new Pair<>(u, 0.0))
                 .collect(Collectors.toMap(Pair::getKey, Pair::getRating));

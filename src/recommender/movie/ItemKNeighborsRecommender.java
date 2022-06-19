@@ -40,7 +40,9 @@ public class ItemKNeighborsRecommender {
     /**
      * Calculates and prints the predicted rating of a user for a specific movie
      */
-    public void predict(){
+    public long predict(){
+
+        long start = System.currentTimeMillis();
 
         // calculate similarity of this movie with every other available movie
         Map<User, Double> movieRatings = RecommenderUtils.collectMovieRatings(allUsers, movie);
@@ -83,7 +85,10 @@ public class ItemKNeighborsRecommender {
 
         Double prediction = userAvgRating + (numerator/denominator);
 
+        long end = System.currentTimeMillis();
+        long time = end - start;
         System.out.println("Prediction for User " + user.getId() + " and movie " + movie.getId() + " = " + prediction);
+        return time;
     }
 
     public static void main(String args[]) {

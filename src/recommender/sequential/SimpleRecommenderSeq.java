@@ -1,4 +1,4 @@
-package recommender.movie;
+package recommender.sequential;
 
 import common.Movie;
 import common.User;
@@ -9,8 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SimpleRecommender {
-
+public class SimpleRecommenderSeq {
     Map<Movie, Double> coOccurrences;
     List<Movie> allMovies;
     List<User> allUsers;
@@ -23,7 +22,7 @@ public class SimpleRecommender {
      * @param movieToPredict The movie for which to produce the prediction
      * @param allUsers A list with all the users
      */
-    public SimpleRecommender(List<Movie> movies, User user, Movie movieToPredict, List<User> allUsers) {
+    public SimpleRecommenderSeq(List<Movie> movies, User user, Movie movieToPredict, List<User> allUsers) {
         this.allMovies = movies;
         this.user = user;
         this.movieToPredict = movieToPredict;
@@ -43,8 +42,8 @@ public class SimpleRecommender {
         long start = System.currentTimeMillis();
 
         // compute co-occurrences and normalize them
-        Map<Movie, Long> freqs = RecommenderUtils.computeCoOccurrences(allUsers, user, movieToPredict);
-        coOccurrences = RecommenderUtils.normalizeCoOccurrences(freqs);
+        Map<Movie, Long> freqs = RecommenderUtilsSeq.computeCoOccurrences(allUsers, user, movieToPredict);
+        coOccurrences = RecommenderUtilsSeq.normalizeCoOccurrences(freqs);
 
         setUpRating();
 
@@ -61,6 +60,7 @@ public class SimpleRecommender {
 
         long end = System.currentTimeMillis();
         long time = end-start;
+//        System.out.println("Time elapsed: " + time);
         System.out.println("Prediction for User " + user.getId() + " and movie " + movieToPredict.getId() + " = " + prediction.get());
         return time;
     }
@@ -73,13 +73,12 @@ public class SimpleRecommender {
 
         // for the given user, set up missing ratings with avg rating of the user
         Optional<Double> userSumRating = user.getRatings().values()
-                .parallelStream()
+                .stream()
                 .reduce(Double::sum);
         Double userAvg = userSumRating.get()/user.getRatings().size();
 
         // movies not rated by the user should have the user's avg rating
         Map<Movie, Double> collect = allMovies.stream()
-                .parallel()
                 .filter(movie -> !user.getRatings().containsKey(movie))
                 .collect(Collectors.toMap(Function.identity(), value -> userAvg));
 
@@ -87,6 +86,4 @@ public class SimpleRecommender {
         collect.forEach((m,v) -> user.getRatings().put(m, v));
 
     }
-
-
 }

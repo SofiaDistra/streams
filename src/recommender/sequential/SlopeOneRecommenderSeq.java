@@ -1,4 +1,4 @@
-package recommender.movie;
+package recommender.sequential;
 
 import common.Combo;
 import common.Movie;
@@ -9,13 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * This class implements the slope one algorithm for recommendations.
- * It receives a specific user and a specific movie for which
- * to calculate the prediction.
- */
-public class SlopeOneRecommender {
-
+public class SlopeOneRecommenderSeq {
     private User user;
     private Movie movie;
     private List<User> users;
@@ -29,7 +23,7 @@ public class SlopeOneRecommender {
      * @param movie The movie for which to produce the prediction
      * @param users The list of all users
      */
-    public SlopeOneRecommender(User user, Movie movie, List<User> users) {
+    public SlopeOneRecommenderSeq(User user, Movie movie, List<User> users) {
         this.user = user;
         this.movie = movie;
         this.userRatings = user.getRatings();
@@ -48,10 +42,11 @@ public class SlopeOneRecommender {
         }
 
         long start = System.currentTimeMillis();
+
         preProcess();
 
         // calculate the prediction sum
-        Optional<Double> pred = diffsFinal.stream().parallel().map(combo -> {
+        Optional<Double> pred = diffsFinal.stream().map(combo -> {
             double orig = userRatings.get(combo.getMovie());
             Long freq = combo.getFreq();
             Double differ = combo.getDiff();
@@ -59,7 +54,7 @@ public class SlopeOneRecommender {
         }).reduce(Double::sum);
 
         // sum the frequencies
-        Optional<Long> totalFreqs = freqsFlat.values().stream().parallel().reduce(Long::sum);
+        Optional<Long> totalFreqs = freqsFlat.values().stream().reduce(Long::sum);
 
         // final prediction
         Double prediction = pred.get()/totalFreqs.get();
@@ -67,6 +62,7 @@ public class SlopeOneRecommender {
         long end = System.currentTimeMillis();
         long time = end-start;
         System.out.println("Prediction for User " + user.getId() + " and movie " + movie.getId() + " = " + prediction);
+
         return time;
     }
 
@@ -74,11 +70,10 @@ public class SlopeOneRecommender {
      * Preprocesses the data, so as to calculate the differences and co-occurrences matrices
      */
     private void preProcess() {
-        freqsFlat = RecommenderUtils.computeCoOccurrences(users, user, movie);
+        freqsFlat = RecommenderUtilsSeq.computeCoOccurrences(users, user, movie);
 
         // contains the differences
         List<Map<Movie, Double>> diffs = userRatings.keySet().stream()
-                .parallel()
                 .map(rating -> users.stream().filter(u ->
                                 !u.equals(user) && u.getRatings().containsKey(rating)
                                         && u.getRatings().containsKey(movie)).collect(Collectors.toList())
@@ -90,11 +85,11 @@ public class SlopeOneRecommender {
                 .collect(Collectors.toList());
 
         // the differences list flattened
-        Map<Movie, Double> diffsFlat = diffs.parallelStream().flatMap(map -> map.entrySet().stream())
+        Map<Movie, Double> diffsFlat = diffs.stream().flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // the list of final differences
-        diffsFinal = diffsFlat.entrySet().stream().parallel()
+        diffsFinal = diffsFlat.entrySet().stream()
                 .map(d -> {
                     Long freq = freqsFlat.get(d.getKey());
                     return new Combo(d.getValue() / freq, freq, d.getKey());

@@ -1,6 +1,7 @@
 package com.company.excercises;
 
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class PiCalcStreams {
 
@@ -12,17 +13,22 @@ public class PiCalcStreams {
         double step = 1.0 / (double)sections;
 
         // calculate sum using streams
-        LongStream stream = LongStream.range(0L, sections);
-        sum = stream
-                .mapToDouble(i -> ((double)i+0.5)*step)
-                .reduce(0, (a,b) -> {
-                    a += 4.0/(1.0+b*b);
-                    return a;
-        });
+        sum = Stream
+                .iterate(0, i -> i+1)
+                .limit(sections)
+                .parallel()
+                .mapToDouble(i -> mapFunction(i,step))
+                .reduce(0.0, Double::sum);
 
         double pi = sum * step;
 
         System.out.println("Computed pi = " + pi);
         System.out.println("Difference between computed pi and Math.PI = " + Math.abs(pi - Math.PI));
+    }
+
+    public static double mapFunction(int i, double step)
+    {
+        double x = ((double)i+0.5)*step;
+        return 4.0/(1.0+x*x);
     }
 }

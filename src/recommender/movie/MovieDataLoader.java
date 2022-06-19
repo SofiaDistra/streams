@@ -31,6 +31,7 @@ public class MovieDataLoader {
 
         try {
              users = Files.lines(path)
+                            .parallel()
                             .skip(1) // skip the header line
                             .map(line -> line.split(",")) // transform each line to an array
                             .map(splitted -> {
@@ -59,6 +60,7 @@ public class MovieDataLoader {
 
         try {
             movies = Files.lines(path)
+                    .parallel()
                     .skip(1) // skip the header line
                     .map(new MovieMapper()) // transform each line to an array
                     .distinct()
